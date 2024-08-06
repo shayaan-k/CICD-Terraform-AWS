@@ -54,7 +54,7 @@ The secrets that need to be added are:
 4. AWS SSH Public key
 5. AWS SSH Private key
 
-### Creating Workflow
+### Creating deploy infrastructure workflow
 The github action first sets the environment variables as those found in the repository secrets
 I then start my job which consists of 4 steps:
 1. Setup Terraform. There is already a hashicorp action for this so I can just use that.
@@ -63,3 +63,21 @@ I then start my job which consists of 4 steps:
 4. Terraform apply. Actually applies the changes. Is based on the output from plan to ensure it only runs if terraform plan is successful
 
 pushing this code to remote should automatically trigger the jobs and deploy.
+
+## Creating deploy app workflow
+In order to deploy the app we need to get the public ip address of the server we create.
+Adding a method of getting that IP is needed and then it needs to be passed to the next job.
+
+The deploy app job sets the IP address as an environment variable.
+We then complete a few setup steps.
+1. Login to Amazon ecr using the amazon aws builtin action
+2. Create a repository in ECR for our app
+3. Build the docker image by passing the registry name (collected from the login command), the repo name (repo we created), and the image tag (in this case it is the commit hash)
+
+Finally, we cna deploy our image onto the EC2 instance
+Using the ssh-actions step, we can ssh into our instance by passing the hostname, public ip, and ssh key.
+While sshing, we can run a script that install docker and awscli, stops any running containers, pulls the latest image of our docker application, and runs it.
+
+## Checking results
+Once our github action is complete. Terraform should have setup a server and ran our containerized app on it.
+By navigating to the instances IP address on the browser. We can see the node app running. The output "Service is up and running" is shows which means everything went fine.
