@@ -1,4 +1,4 @@
-# NodeJS-AWS
+# CICD with Terraform on AWS
 Using Terraform, Docker, Github Actions and AWS to build a complete CI/CD pipeline
 
 ## Node JS app
