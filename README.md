@@ -44,3 +44,22 @@ need instance public ip to log in via ssh
 
 ### Create Variables file to store values
 Write default values to be used by github actions to deploy the EC2 Instance
+
+## Github Actions
+### Add secrets
+The secrets that need to be added are:
+1. AWS access key 
+2. AWS access key private
+3. AWS Bucket name
+4. AWS SSH Public key
+5. AWS SSH Private key
+
+### Creating Workflow
+The github action first sets the environment variables as those found in the repository secrets
+I then start my job which consists of 4 steps:
+1. Setup Terraform. There is already a hashicorp action for this so I can just use that.
+2. Run Terraform Init: Tells Terraform to install neccessary plugins to setup server. As well as bucket and region config
+3. Run Terraform Plan: This is a rough run of the script. It can be used to catch errors ahead of time
+4. Terraform apply. Actually applies the changes. Is based on the output from plan to ensure it only runs if terraform plan is successful
+
+pushing this code to remote should automatically trigger the jobs and deploy.
